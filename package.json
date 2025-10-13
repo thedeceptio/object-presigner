@@ -1,5 +1,5 @@
 {
-  "name": "@s3likestorage/object-presigner",
+  "name": "@thedeceptio/object-presigner",
   "version": "0.0.1",
   "description": "Generate presigned URLs and object signatures compatible with S3-like storages.",
   "keywords": [
@@ -15,7 +15,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thedeceptio/object-presigner.git"
+    "url": "git+https://github.com/thedeceptio/object-presigner.git"
   },
   "homepage": "https://github.com/thedeceptio/object-presigner#readme",
   "bugs": {

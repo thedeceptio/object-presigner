@@ -1,4 +1,4 @@
-# @s3likestorage/object-presigner
+# @thedeceptio/object-presigner
 
 Generate presigned URLs compatible with S3-like object storage.
 
@@ -7,7 +7,7 @@ Generate presigned URLs compatible with S3-like object storage.
 npm i @s3ikestorage/object-presigner
 
 ## Usage (ESM)
-import { createPresignedUrlV4 } from "@s3likestorage/object-presigner";
+import { createPresignedUrlV4 } from "@thedeceptio/object-presigner";
 
 ## Node support
 Node >= 16
