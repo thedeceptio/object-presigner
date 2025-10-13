@@ -1,5 +1,5 @@
 {
-  "name": "@S3LikeStorage/object-presigner",
+  "name": "@s3likestorage/object-presigner",
   "version": "0.0.1",
   "description": "Generate presigned URLs and object signatures compatible with S3-like storages.",
   "keywords": [
