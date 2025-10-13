@@ -51,10 +51,12 @@
     "prepublishOnly": "npm run lint && npm run typecheck && npm run test"
   },
   "devDependencies": {
-    "tsup": "^8.0.0",
-    "eslint": "^9.0.0",
+    "@eslint/js": "^9.37.0",
+    "c8": "^9.0.0",
+    "eslint": "^9.37.0",
+    "globals": "^15.15.0",
     "rimraf": "^6.0.0",
-    "typescript": "^5.0.0",
-    "c8": "^9.0.0"
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
   }
 }
