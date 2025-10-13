@@ -66,7 +66,7 @@ export function createPresignedUrlV4({
   // Timestamps
   const now = new Date();
   const date = now.toISOString().slice(0, 10).replace(/-/g, ""); // YYYYMMDD
-  const datetime = now.toISOString().replace(/[:\-]|\.\d{3}/g, ""); // YYYYMMDDTHHMMSSZ (no punctuation)
+  const datetime = now.toISOString().replace(/[:]|\.\d{3}/g, ""); // YYYYMMDDTHHMMSSZ (no punctuation)
 
   // Algorithm & scope
   const algorithm = "AWS4-HMAC-SHA256";
@@ -126,8 +126,8 @@ export function createPresignedUrlV4({
 export function createPresignedUrlFromEnv({ key, ...overrides }) {
   return createPresignedUrlV4({
     key,
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
     region: process.env.AWS_REGION || "us-east-1",
     bucket: process.env.BUCKET_NAME || "your-bucket-name",
     signingHost: process.env.OBJECT_STORAGE_EXTERNAL_ENDPOINT || "signinghost.com",
