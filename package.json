@@ -15,11 +15,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/S3LikeStorage/object-presigner"
+    "url": "https://github.com/thedeceptio/object-presigner.git"
   },
-  "homepage": "https://github.com/S3LikeStorage/object-presigner#readme",
+  "homepage": "https://github.com/thedeceptio/object-presigner#readme",
   "bugs": {
-    "url": "https://github.com/S3LikeStorage/object-presigner/issues"
+    "url": "https://github.com/thedeceptio/object-presigner/issues"
   },
   "type": "module",
   "engines": {
