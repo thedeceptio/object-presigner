@@ -59,5 +59,8 @@
     "rimraf": "^6.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@thedeceptio/object-presigner": "file:thedeceptio-object-presigner-0.0.1.tgz"
   }
 }
