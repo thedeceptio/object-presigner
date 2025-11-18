@@ -1,6 +1,6 @@
 {
   "name": "@thedeceptio/object-presigner",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Generate presigned URLs and object signatures compatible with S3-like storages.",
   "keywords": [
     "s3",
@@ -59,8 +59,5 @@
     "rimraf": "^6.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@thedeceptio/object-presigner": "file:thedeceptio-object-presigner-0.0.1.tgz"
   }
 }

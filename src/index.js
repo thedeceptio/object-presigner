@@ -1,5 +1,17 @@
 import crypto from "node:crypto";
 
+/**
+ * @param {Object} params
+ * @param {string} params.key
+ * @param {string} params.accessKeyId
+ * @param {string} params.secretAccessKey
+ * @param {string} [params.region]
+ * @param {number} [params.expiresIn]
+ * @param {string} [params.bucket]
+ * @param {string} [params.signingHost]
+ * @param {string} [params.cdnHost]
+ * @returns {string}
+ */
 export function createPresignedUrlV4({
   key,
   accessKeyId,
@@ -18,7 +30,8 @@ export function createPresignedUrlV4({
   // Timestamps
   const now = new Date();
   const date = now.toISOString().slice(0, 10).replace(/-/g, "");           // YYYYMMDD
-  const datetime = now.toISOString().replace(/[:\-]|\.\d{3}/g, "");        // YYYYMMDDTHHMMSSZ
+  // Remove colons, dashes, and milliseconds to get YYYYMMDDTHHMMSSZ format
+  const datetime = now.toISOString().replace(/[:-]/g, "").replace(/\.\d{3}/g, "");  // YYYYMMDDTHHMMSSZ
 
   // Algorithm & scope
   const algorithm = "AWS4-HMAC-SHA256";
@@ -36,7 +49,10 @@ export function createPresignedUrlV4({
 
   const sortedQueryParams = Object.keys(queryParams)
     .sort()
-    .map((k) => `${k}=${encodeURIComponent(queryParams[k])}`)
+    .map((k) => {
+      const key = /** @type {keyof typeof queryParams} */ (k);
+      return `${k}=${encodeURIComponent(queryParams[key])}`;
+    })
     .join("&");
 
   // Canonical request (GET, path-style)
@@ -60,6 +76,13 @@ export function createPresignedUrlV4({
   const stringToSign = [algorithm, datetime, credentialScope, canonicalHash].join("\n");
 
   // Derive signing key
+  /**
+   * @param {string} sk
+   * @param {string} dateStamp
+   * @param {string} regionName
+   * @param {string} serviceName
+   * @returns {Buffer}
+   */
   const getSignatureKey = (sk, dateStamp, regionName, serviceName) => {
     const kDate = crypto.createHmac("sha256", `AWS4${sk}`).update(dateStamp).digest();
     const kRegion = crypto.createHmac("sha256", kDate).update(regionName).digest();
