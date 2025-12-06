@@ -1,64 +1,98 @@
 # @thedeceptio/object-presigner
 
-Generate presigned URLs compatible with S3-like object storage.
+A lightweight library to generate AWS SigV4 presigned URLs compatible with any S3-compatible object storage (MinIO, Cloudflare R2, DigitalOcean Spaces, AWS S3, etc.).
 
-[GitHub Repository](https://github.com/thedeceptio/object-presigner)
+A key feature of this library is the ability to separate the **signing host** (internal/origin) from the **CDN host** (public/edge), allowing you to sign URLs that point to a CDN while validating against the origin.
 
 ## Features
 
-- **S3 Compatible**: Works with AWS S3 and any S3-compatible storage (MinIO, DigitalOcean Spaces, etc.).
-- **Secure**: Generates AWS Signature V4 presigned URLs without exposing credentials.
-- **Flexible**: Supports custom signing hosts and CDN hosts for complex architecture.
-- **Lightweight**: Zero dependencies (uses Node.js built-in `crypto`).
+-   **Zero Dependencies**: Uses native Node.js `crypto` module.
+-   **S3 Compatible**: Works with AWS S3 and any S3-compatible storage.
+-   **CDN Friendly**: Explicitly supports separate signing and public (CDN) hosts.
+-   **Environment Variable Support**: Optional helper to configure via `process.env`.
+-   **Type Safe**: Written in JS with JSDoc types, includes TypeScript definition files.
+
+[GitHub Repository](https://github.com/thedeceptio/object-presigner)
 
 ## Install
 
 ```bash
-npm i @thedeceptio/object-presigner
+npm install @thedeceptio/object-presigner
+# or
+yarn add @thedeceptio/object-presigner
+# or
+pnpm add @thedeceptio/object-presigner
 ```
 
 ## Usage
 
+### Basic Usage
+
+Use `createPresignedUrlV4` for full control over parameters.
+
 ```javascript
 import { createPresignedUrlV4 } from "@thedeceptio/object-presigner";
 
-try {
-  const url = createPresignedUrlV4({
-    key: "example-image.jpg",
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    bucket: "my-bucket",
-    region: "us-east-1",
-    // Optional
-    expiresIn: 3600, // 1 hour
-    signingHost: "s3.us-east-1.amazonaws.com",
-    cdnHost: "cdn.mydomain.com" 
-  });
+const url = createPresignedUrlV4({
+  key: "uploads/image.png",
+  accessKeyId: "YOUR_ACCESS_KEY",
+  secretAccessKey: "YOUR_SECRET_KEY",
+  region: "us-east-1",             // default: us-east-1
+  bucket: "my-bucket",             // default: your-bucket-name
+  signingHost: "s3.example.com",   // The endpoint used for signing
+  cdnHost: "cdn.example.com",      // The public domain in the returned URL
+  expiresIn: 3600                  // default: 3600 (1 hour)
+});
 
-  console.log("Presigned URL:", url);
-} catch (error) {
-  console.error("Error generating URL:", error.message);
-}
+console.log(url);
+// https://cdn.example.com/uploads/image.png?X-Amz-Algorithm=...
 ```
+
+### Using Environment Variables
+
+Use `createPresignedUrlFromEnv` to automatically load configuration from `process.env`. You can still override any parameter.
+
+```javascript
+import { createPresignedUrlFromEnv } from "@thedeceptio/object-presigner";
+
+// Assumes process.env has AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, etc.
+const url = createPresignedUrlFromEnv({
+  key: "uploads/document.pdf",
+  expiresIn: 900 // Override default expiry to 15 mins
+});
+```
+
+#### Supported Environment Variables
+
+| Variable Name | Description | Default |
+| :--- | :--- | :--- |
+| `AWS_ACCESS_KEY_ID` | Your Access Key ID | `""` |
+| `AWS_SECRET_ACCESS_KEY` | Your Secret Access Key | `""` |
+| `AWS_REGION` | Region | `"us-east-1"` |
+| `BUCKET_NAME` | Bucket Name | `"your-bucket-name"` |
+| `OBJECT_STORAGE_EXTERNAL_ENDPOINT` | Host used for signing (Origin) | `"signinghost.com"` |
+| `CDN_ENDPOINT` | Host used for the final URL (Public) | `"cdn.example.com"` |
 
 ## API Reference
 
-### `createPresignedUrlV4(params)`
+### `createPresignedUrlV4(options)`
 
-Generates a presigned URL for a GET request.
+Generates a SigV4 presigned URL for a `GET` request.
 
-#### Parameters
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `key` | `string` | **Required** | Object key (path) within the bucket. |
+| `accessKeyId` | `string` | **Required** | AWS Access Key ID. |
+| `secretAccessKey` | `string` | **Required** | AWS Secret Access Key. |
+| `region` | `string` | `"us-east-1"` | AWS Region. |
+| `bucket` | `string` | `"your-bucket-name"` | Name of the bucket. |
+| `signingHost` | `string` | `"signinghost.com"` | The host used in the canonical request signature. |
+| `cdnHost` | `string` | `"cdn.example.com"` | The host used in the returned URL. |
+| `expiresIn` | `number` | `3600` | Expiration time in seconds. |
 
-| Name | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `key` | `string` | Yes | - | The key (filename/path) of the object. |
-| `accessKeyId` | `string` | Yes | - | AWS Access Key ID. |
-| `secretAccessKey` | `string` | Yes | - | AWS Secret Access Key. |
-| `bucket` | `string` | No | `"your-bucket-name"` | The name of the S3 bucket. |
-| `region` | `string` | No | `"us-east-1"` | AWS region. |
-| `expiresIn` | `number` | No | `3600` | Expiration time in seconds. |
-| `signingHost` | `string` | No | `"signinghost.com"` | Hostname used for the signature calculation (e.g., `s3.amazonaws.com`). |
-| `cdnHost` | `string` | No | `"cdn.example.com"` | Hostname used in the final returned URL. |
+### `createPresignedUrlFromEnv(options)`
+
+Wrapper around `createPresignedUrlV4` that defaults to environment variables. Accepts an object with `key` (required) and optional overrides for any other parameter.
 
 ## Configuration
 
