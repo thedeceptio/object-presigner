@@ -66,7 +66,7 @@ export function createPresignedUrlV4({
   // Timestamps
   const now = new Date();
   const date = now.toISOString().slice(0, 10).replace(/-/g, ""); // YYYYMMDD
-  const datetime = now.toISOString().replace(/[:]|\.\d{3}/g, ""); // YYYYMMDDTHHMMSSZ (no punctuation)
+  const datetime = new Date().toISOString().replace(/[-]|\.\d{3}/g, ''); // YYYY-MM-DDTHHMMSSZ
 
   // Algorithm & scope
   const algorithm = "AWS4-HMAC-SHA256";
